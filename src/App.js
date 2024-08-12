@@ -1,71 +1,83 @@
 import './App.css';
-import './index.css'
-import React, {useState} from 'react'
- 
+import {useState} from'react';
+
 function App() {
- 
-  // state
-  const [weight, setWeight] = useState(0)
-  const [height, setHeight] = useState(0)
-  const [bmi, setBmi] = useState('')
-  const [message, setMessage] = useState('')
- 
-  let calcBmi = (event) => {
-    //prevent submitting to the server
-    event.preventDefault()
- 
-    if (weight === 0 || height === 0) {
-      alert('Please enter a valid weight and height')
-    } else {
-      let bmi = (weight / (height * height) * 703)
-      setBmi(bmi.toFixed(1))
- 
-      // Logic for message
- 
-      if (bmi < 25) {
-        setMessage('You are underweight')
-      } else if (bmi >= 25 && bmi < 30) {
-        setMessage('You are a healthy weight')
-      } else {
-        setMessage('You are overweight')
-      }
+  const[num,setnum]=useState({
+    name: "Your"
+  });
+  const[username, setUsername] = useState('');
+  const[height,setheight]=useState('');
+  const[weight,setweight]=useState('');
+
+  function calculate() {
+    let bmi = (weight/((height/100)**2)).toFixed(1);
+    let result = '';
+
+    if(bmi < 18.5){
+      result = 'Underweight';
+    } else if(18.5 <= bmi && bmi <= 24.9){
+      result = 'Healthy';
+    } else if(25 <= bmi && bmi <= 29.9){
+      result = 'Overweight';
+    } else if(30 <= bmi && bmi <= 34.9){
+      result = 'Obese';
+    } else if(35 <= bmi){
+      result = 'Extremely obese';
     }
+
+    setnum({
+      name: username || "Your",
+      height: height,
+      weight: weight,
+      bmi: bmi,
+      result: result
+    });
   }
- 
- 
-  let reload = () => {
-    window.location.reload()
+
+  function reset() {
+    setUsername('');
+    setheight('');
+    setweight('');
+    setnum({
+      name: "Your"
+    });
   }
- 
+
   return (
-    <div className="app">
-    <div className='container'>
-      <h2 className='center'>BMI Calculator</h2>
-      <form onSubmit={calcBmi}>
- 
-        <div>
-          <label>Weight (lbs)</label>
-          <input value={weight} onChange={(e) => setWeight(e.target.value)} />
-        </div>
- 
-        <div>
-          <label>Height (in)</label>
-          <input value={height} onChange={(event) => setHeight(event.target.value)} />
-        </div>
- 
-        <div>
-          <button className='btn' type='submit'>Submit</button>
-          <button className='btn btn-outline' onClick={reload} type='submit'>Reload</button>
-        </div>
-      </form>
- 
-      <div className='center'>
-        <h3>Your BMI is: {bmi}</h3>
-        <p>{message}</p>
+    <div className="App">
+      <div className="wrapper">
+        <h1>BODY MASS INDEX</h1>
+        <h3>name</h3>
+        <input 
+          type='text' 
+          placeholder='Enter your name' 
+          value={username}
+          onChange={(e)=>setUsername(e.target.value)}
+        />
+        <h3>Height</h3>
+        <input 
+          type='text' 
+          placeholder='Enter height in cm' 
+          value={height}
+          onChange={(e)=>setheight(e.target.value)}
+        />
+        <h3>Weight</h3>
+        <input 
+          type='text' 
+          placeholder='Enter weight in kg' 
+          value={weight}
+          onChange={(e)=>setweight(e.target.value)}
+        />
+        <br/>
+        <br/>
+        <button onClick={calculate}>Calculate</button>
+        <button onClick={reset}>Reload</button>
+        {num.result ? 
+          <h1>{num.name}'s BMI is {num.bmi} and your status is {num.result}</h1>
+        : ''}
       </div>
     </div>
-  </div>
   );
 }
- 
+
 export default App;
